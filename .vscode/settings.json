@@ -1,0 +1,9 @@
+{
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.rulers": [80, 120],
+    "files.exclude": {
+        ".vscode/": true
+    },
+    "files.trimTrailingWhitespace": true
+}

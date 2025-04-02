@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Therapy MOD player user guide</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" media="screen" href="help.css">
+        <link rel="preload" as="font" type="font/ttf" crossorigin="" href="fonts/chicagoflf.ttf">
+        <link rel="preload" as="font" type="font/otf" crossorigin="" href="fonts/metropolis.woff2">
+    </head>
+    <body>
+        <hgroup>
+            <h1>Therapy MOD player</h1>
+            <p>An audio player for the <a href="https://en.wikipedia.org/wiki/MOD_(file_format)">MOD music format</a>.</p>
+        </hgroup>
+        <ul>
+            <li>Multichannel support</li>
+            <li>Floating point mixers with volume ramping</li>
+            <li>Variable amplification with clipping</li>
+            <li>Various sample interpolation methods</li>
+            <li>Stereo crossfade for hard panned (Amiga) MODs</li>
+            <li>Real stereo mode for MODs utilizing panning commands</li>
+            <li>Graphical user interface with keyboard and mouse support, scopes and RMS meters</li>
+        </ul>
+
+        <aside class="desktop">Put your browser into fullscreen and increase zoom until the UI fits the screen without scrollbars for a
+        true retro experience!</aside>
+
+        <h2>Player controls</h2>
+
+        <div class="help__control">
+            <div class="info__control info__control--eject"></div>
+            <div class="help__controltext">
+                <p>Opens a file for playback. The player will start playback right after opening the song. You can also
+                just drop a MOD file onto the page to load it, but on Firefox you also need to click the play button to
+                start playback for the first file (subsequent dropped files will automatically start).</p>
+            </div>
+        </div>
+        <div class="mobile">
+            <div class="help__control">
+                <div class="info__control info__control--help"></div>
+                <div class="help__controltext">
+                    <p>Opens the user guide (you probably already figured it out).</p>
+                </div>
+            </div>
+        </div>
+        <div class="help__control">
+            <div class="info__control info__control--play"></div>
+            <div class="help__controltext">
+                <p>Starts playback. The button is not shown until a MOD file is loaded. During playback the icon turns
+                into a stop symbol and clicking it will stop playback.</p>
+            </div>
+        </div>
+
+        <h2>Keyboard commands</h2>
+
+        <div class="help__kbd">
+            <div class="help__kbdkey">Esc</div>
+            <div class="help__kbdtext">Open the file picker dialog, close the
+            <a href="#preferences_dialog">preferences dialog</a> and this help page (when open)</div>
+            <div class="help__kbdkey">Space</div>
+            <div class="help__kbdtext">Start/stop playback</div>
+            <div class="help__kbdkey">F1</div>
+            <div class="help__kbdtext">Open this user guide</div>
+            <div class="help__kbdkey">F10</div>
+            <div class="help__kbdtext">Open <a href="#preferences_dialog">preferences dialog</a></div>
+            <div class="help__kbdkey">+ / -</div>
+            <div class="help__kbdtext">Increase / decrease amplification by 0.05</div>
+            <div class="help__kbdkey">0</div>
+            <div class="help__kbdtext">Reset amplification to 1×</div>
+            <div class="help__kbdkey">← or ↑</div>
+            <div class="help__kbdtext">Jump to previous pattern sequence</div>
+            <div class="help__kbdkey">→ or ↓</div>
+            <div class="help__kbdtext">Jump to next pattern sequence</div>
+            <div class="help__kbdkey">Home</div>
+            <div class="help__kbdtext">Restart song</div>
+            <div class="help__kbdkey">N</div>
+            <div class="help__kbdtext">Use nearest neighbor sample interpolation</div>
+            <div class="help__kbdkey">A</div>
+            <div class="help__kbdtext">Use Amiga sample interpolation</div>
+            <div class="help__kbdkey">L</div>
+            <div class="help__kbdtext">Use linear sample interpolation</div>
+            <div class="help__kbdkey">W</div>
+            <div class="help__kbdtext">Use Watte trilinear sample interpolation</div>
+            <div class="help__kbdkey">I</div>
+            <div class="help__kbdtext">Toggle interpolation method (auto → nearest → Amiga → linear → Watte)</div>
+            <div class="help__kbdkey">M</div>
+            <div class="help__kbdtext">Force output to mono</div>
+            <div class="help__kbdkey">H</div>
+            <div class="help__kbdtext">Set Amiga-style hard stereo panning (no crossfade)</div>
+            <div class="help__kbdkey">X</div>
+            <div class="help__kbdtext">Set Amiga-style hard stereo panning with 75% crossfade</div>
+            <div class="help__kbdkey">R</div>
+            <div class="help__kbdtext">Set real stereo mode (for songs using commands 8xx and E8x)</div>
+            <div class="help__kbdkey">S</div>
+            <div class="help__kbdtext">Toggle stereo mode (auto → hard → hard with crossfeed → real)</div>
+        </div>
+
+        <h1>User interface</h1>
+
+        <h2>Now playing</h2>
+
+        <p>The header displays information about the song being played.</p>
+
+        <picture>
+            <div class="nowplaying">
+                <header class="header">
+                    <div class="content">
+                        <div id="song_position" class="content__part content__part--three-pane content__part--no-wrap">pos: 7.12</div>
+                        <div id="song_title" class="content__part content__part--three-pane content__part--no-wrap content__part--grow text--center text--primary">everyway</div>
+                        <div id="elapsed_time" class="content__part content__part--three-pane content__part--no-wrap text--right">0:25</div>
+                    </div>
+                </header>
+                <section class="progress">
+                    <div id="progress_bar" class="progress__bar">
+                        <div id="progress_ratio" class="progress__elapsed" style="transform: scale(0.142974, 1);"></div>
+                    </div>
+                </section>
+            </div>
+        </picture>
+
+        <ul>
+            <li class="desktop"><p>The current playback position within the song is shown to the left.
+            The first number is the index (starting at 0) into the pattern sequence and the second hexadecimal number
+            is the current row (also starting at 0) within the pattern.</p></li>
+            <li><p>The title of the song or the filename (if the song has no title) is
+            displayed in the <span class="mobile">left corner</span><span class="desktop">center</span>.</p></li>
+            <li><p>To the right is the time elapsed since playback of the current song has started.</p></li>
+            <li><p>The progress bar displays the relative position within the song's pattern sequence. Since the MOD format
+            allows skipping and jumping between sequence entries, this is just a rudimentary indicator. Click on the
+            progress bar to jump to the nearest pattern sequence position.</p></li>
+        </ul>
+
+        <h2>Audio renderer information, scopes</h2>
+
+        <p>The area below the header shows information about the state of the audio renderer.</p>
+
+        <picture>
+            <section class="scopes">
+                <div class="content">
+                    <div class="content__part content__part--two-pane content__part--no-wrap content__part--grow">
+                        <div>Amiga hard pan (auto), crossfeed: 75%</div>
+                        <div>2× amplify, Watte trilinear interpolation</div>
+                    </div>
+                    <div class="content__part content__part--two-pane content__part--no-wrap content__part--grow text--right">
+                        <div id="num_channels">4 channels</div>
+                        <div id="renderer">Software renderer at 48000 Hz</div>
+                    </div>
+                </div>
+            </section>
+        </picture>
+
+        <a name="stereo_mode"></a>
+        <p>The first entry<span class="desktop"> to the left</span> tells how the song is rendered to stereo output.
+        Click the entry to open the <a href="#preferences_dialog">preferences dialog</a>. Supported stereo output
+        methods are:</p>
+
+        <ul>
+            <li><p><em>Mono</em>: the song is mixed down to mono (both channels output the same sound).</p></li>
+
+            <li><p><em>Amiga hard pan</em>: hard pan channels 1 and 4 to the left, channels 2 and 3 to the right. Multichannel songs
+            continue this pattern (ie. channels 5 and 8 are panned to the left, channels 6 and 7 are panned to the
+            right). <em>Crossfeed</em> can be set when using this method to mix a percentage of the left and right
+            channels into the opposite channel to compress the stereo width of the mix.</p></li>
+
+            <li><p><em>Real stereo</em>: Some songs use 8xx and/or E8x effects to set the position (panning) of a channel
+            in the stereo space. This mode enables these commands and pans the channels accordingly.</p></li>
+
+            <li><p><em>Automatic</em>: The player chooses an appropriate mode. Songs that utilize 8xx and/or E8x effects
+            will be played in real stereo, the rest with Amiga hard pan.</p></li>
+        </ul>
+
+        <a name="amplification"></a>
+        <p>The second entry<span class="desktop"> to the left</span> shows the current amplification and interpolation
+        method. <em>Amplification</em> applies a gain to the mix, thus increasing or decreasing the output volume. An
+        amplification of 1× represents a gain of 1/4. This is a mostly safe choice, most songs won't go into clipping,
+        even multichannel ones. For 4-channel modules, amplification can usually be safely increased to 2×. Check the
+        oscilloscopes and reduce amplification when clipping occurs.</p>
+
+        <a name="interpolation_method"></a>
+        <p>Pitch and speed of an audio sample during playback is controlled by the note entered by the composer. For
+        example, the base note C-2 in Protracker requires a playback sample rate of around 8287&nbsp;Hz (for PAL,
+        8363&nbsp;Hz for NTSC). The Amiga's Paula chip had 4 independent DACs that could be programmed for individual
+        sample rates and Protracker used this hardware capability to output audio on 4 channels. We don't have Paula
+        here, so the player needs to resample individual channels to 48000&nbsp;Hz. This process is called
+        <em>interpolation</em> and it can be selected between the following methods:</p>
+
+        <ul>
+            <li><p><em>Nearest neighbor</em>: Output the same sample until the next one is reached (zero order hold,
+            sometimes also called no interpolation, although this is technically incorrect). This produces horrible
+            aliasing noises which sounds similar to the rough sound of the Amiga's Paula chip (the DACs in the Amiga
+            did not have proper filtering to cut off aliasing). It's not the same though since the Amiga DAC was
+            sampling at exact time intervals, while in this case the intervals vary by 1 sample. Many songs that use
+            low quality samples rely on the fake treble extension provided by this aliasing noise and will sound dull
+            with better quality interpolation.</p></li>
+
+            <li><p><em>Amiga</em>: This method uses BLEP (band-limited step) interpolation from
+            <a href="https://github.com/8bitbubsy/pt2-clone">Olav "8bitbubsy" Sorensen's pt2-clone</a>. It produces an
+            authentic sounding experience that is much closer to how (the Amiga's) variable-rate DACs really sound than
+            nearest neighbor interpolation at the expense of a lot more processing (this is the most complex and CPU
+            intensive interpolation algorithm). The difference is very apparent in songs that have solo parts of
+            simple soundwaves such as the sine blipping at the beginning of h0ffman's everyway where nearest neighbor
+            produces a lot of parasitic overtones.</p></li>
+
+            <li><p><em>Linear interpolation</em>: Output a weighted average of two neighboring samples. This is a very
+            simple algorithm that provides much improved audio quality. This method was used by the
+            <a href="https://en.wikipedia.org/wiki/Gravis_UltraSound">Gravis Ultrasound</a> which was a very popular
+            audio device among PC demo groups and composers at the time. This interpolation method retains some of the
+            aliasing grain and makes listening to songs with low quality samples still tolerable. One downside of this
+            method is that it also reduces the high frequencies present in the sample.</p></li>
+
+            <li><p><em>Watte trilinear interpolation</em>: This is a trilinear interpolator that I stumbled upon by
+            accident in <a href="https://yehar.com/blog/wp-content/uploads/2009/08/deip.pdf">Olli Niemitalo's excellent
+            "Polynomial Interpolators for High-Quality Resampling of Oversampled Audio" paper</a>. It looked interesting
+            for the <a href="https://github.com/a11599/tmodplay">original tmodplay</a> because it could be implemented
+            with relatively few operations. This method sounds very clean, albeit a bit ringy. Songs that use high
+            quality samples sound excellent with this method.</p></li>
+
+            <li><p><em>Automatic</em>: The player chooses an appropriate method. Songs that have more, than 4 channels,
+            use 8xx and E8x (panning) effects or extended octaves will use linear interpolation (assuming they were
+            composed on a PC with probably a Gravis UltraSound or a more advanced tracker that supported linear
+            interpolation in software), otherwise it will be Amiga.</p></li>
+        </ul>
+
+        <p>The <span class="desktop">upper entry to the right</span><span class="mobile">third entry</span> displays
+        the number of audio channels used for mixing (also the number of channels used by the song).
+        <span class="desktop"> The entry below that shows the renderer device and output sample rate.</span></p>
+
+        <p>The oscilloscopes below the renderer information display the waveform of the mixed sound that is sent to the
+        browser for playback.</p>
+
+        <h2>Samples, song message</h2>
+
+        <p>This area lists the name of audio samples. Trackers allow composers to enter any text here and this area
+        often contains a message or greetings that the composer wanted to tell the listeners. An RMS bar representing
+        the output sound level of a particular audio sample is displayed below each sample.</p>
+
+        <picture>
+            <section class="info">
+                <div class="content content--fit">
+                    <div class="info__samples content__part">
+                        <div class="info__sample info__sample--padding">
+                            <div class="info__samplename">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <div class="info__sampleheader">Samples / song message</div>
+                        </div>
+                        <div class="info__sample"><div class="info__samplenr">1</div><div class="info__samplename" id="sample_0">#h0ffman/fd&amp;uns</div><div class="info__samplevu" id="sample_vu_0" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">2</div><div class="info__samplename" id="sample_1">soundtrack&nbsp;to&nbsp;the</div><div class="info__samplevu" id="sample_vu_1" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">3</div><div class="info__samplename" id="sample_2">amiga&nbsp;64k&nbsp;intro</div><div class="info__samplevu" id="sample_vu_2" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">4</div><div class="info__samplename" id="sample_3">everyway.</div><div class="info__samplevu" id="sample_vu_3" style="transform: scale(0.00583277, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">5</div><div class="info__samplename" id="sample_4">&nbsp;</div><div class="info__samplevu" id="sample_vu_4" style="transform: scale(0.31779, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">6</div><div class="info__samplename" id="sample_5">its&nbsp;saturday&nbsp;morning</div><div class="info__samplevu" id="sample_vu_5" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">7</div><div class="info__samplename" id="sample_6">of&nbsp;the&nbsp;party&nbsp;so&nbsp;i'm</div><div class="info__samplevu" id="sample_vu_6" style="transform: scale(0.43004, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">8</div><div class="info__samplename" id="sample_7">hungover&nbsp;and&nbsp;can't</div><div class="info__samplevu" id="sample_vu_7" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">9</div><div class="info__samplename" id="sample_8">think&nbsp;of&nbsp;anything</div><div class="info__samplevu" id="sample_vu_8" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">10</div><div class="info__samplename" id="sample_9">interesting&nbsp;to&nbsp;type</div><div class="info__samplevu" id="sample_vu_9" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">11</div><div class="info__samplename" id="sample_10">here&nbsp;so&nbsp;i'll&nbsp;just</div><div class="info__samplevu" id="sample_vu_10" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">12</div><div class="info__samplename" id="sample_11">ramble&nbsp;on&nbsp;until&nbsp;i</div><div class="info__samplevu" id="sample_vu_11" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">13</div><div class="info__samplename" id="sample_12">run&nbsp;out&nbsp;of&nbsp;sample</div><div class="info__samplevu" id="sample_vu_12" style="transform: scale(0.387612, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">14</div><div class="info__samplename" id="sample_13">text.&nbsp;or&nbsp;maybe&nbsp;not.</div><div class="info__samplevu" id="sample_vu_13" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">15</div><div class="info__samplename" id="sample_14">&nbsp;</div><div class="info__samplevu" id="sample_vu_14" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">16</div><div class="info__samplename" id="sample_15">&nbsp;</div><div class="info__samplevu" id="sample_vu_15" style="transform: scale(0, 1);"></div></div>
+                    </div>
+                    <div class="info__samples">
+                        <div class="info__sample info__sample--padding">
+                            <div class="info__samplename">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <div class="info__sampleheader">Press F1 for help</div>
+                        </div>
+                        <div class="info__sample"><div class="info__samplenr">17</div><div class="info__samplename" id="sample_16">&nbsp;</div><div class="info__samplevu" id="sample_vu_16" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">18</div><div class="info__samplename" id="sample_17">&nbsp;</div><div class="info__samplevu" id="sample_vu_17" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">19</div><div class="info__samplename" id="sample_18">&nbsp;</div><div class="info__samplevu" id="sample_vu_18" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">20</div><div class="info__samplename" id="sample_19">&nbsp;</div><div class="info__samplevu" id="sample_vu_19" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">21</div><div class="info__samplename" id="sample_20">&nbsp;</div><div class="info__samplevu" id="sample_vu_20" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">22</div><div class="info__samplename" id="sample_21">&nbsp;</div><div class="info__samplevu" id="sample_vu_21" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">23</div><div class="info__samplename" id="sample_22">&nbsp;</div><div class="info__samplevu" id="sample_vu_22" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">24</div><div class="info__samplename" id="sample_23">&nbsp;</div><div class="info__samplevu" id="sample_vu_23" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">25</div><div class="info__samplename" id="sample_24">&nbsp;</div><div class="info__samplevu" id="sample_vu_24" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">26</div><div class="info__samplename" id="sample_25">&nbsp;</div><div class="info__samplevu" id="sample_vu_25" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">27</div><div class="info__samplename" id="sample_26">&nbsp;</div><div class="info__samplevu" id="sample_vu_26" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">28</div><div class="info__samplename" id="sample_27">&nbsp;</div><div class="info__samplevu" id="sample_vu_27" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">29</div><div class="info__samplename" id="sample_28">get&nbsp;in&nbsp;touch...</div><div class="info__samplevu" id="sample_vu_28" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">30</div><div class="info__samplename" id="sample_29">ianhoffmanuk@</div><div class="info__samplevu" id="sample_vu_29" style="transform: scale(0, 1);"></div></div>
+                        <div class="info__sample"><div class="info__samplenr">31</div><div class="info__samplename" id="sample_30">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gmail.com</div><div class="info__samplevu" id="sample_vu_30" style="transform: scale(0, 1);"></div></div>
+                    </div>
+                </div>
+            </section>
+        </picture>
+
+        <aside>The RMS bars are part logarithmic (above -15 dB), part linear (below -15 dB). They are primarily there for visualization and
+        entertainment, not intended to be super-accurate studio metering tools.</aside>
+
+        <a name="preferences_dialog"></a>
+        <h1>Preferences dialog</h1>
+
+        <p>Click the stereo mode or interpolation method audio renderer information link or press F10 to open the
+        preferences dialog. Changes made in this dialog are applied automatically and the preferences are also saved to
+        browser local storage (so they are preserved and automatically loaded the next time you visit this page).</p>
+
+        <picture class="help__dialog">
+            <div class="dialog">
+                <div class="dialog__header">
+                    <h1 class="dialog__title">Preferences</h1>
+                    <button class="dialog__close"></button>
+                </div>
+                <div class="dialog__split"><div class="dialog__splitpart">
+                    <h2 class="dialog__formsection">Interpolation method</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_interpolation_auto" type="radio" name="pref_interpolation" value="auto">
+                        <label class="dialog__formlabel" for="pref_interpolation_auto">Automatic</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_interpolation_0" type="radio" name="pref_interpolation" value="0">
+                        <label class="dialog__formlabel" for="pref_interpolation_0">Nearest neighbor</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_interpolation_0" type="radio" name="pref_interpolation" value="1">
+                        <label class="dialog__formlabel" for="pref_interpolation_0">Amiga</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_interpolation_1" type="radio" name="pref_interpolation" value="2">
+                        <label class="dialog__formlabel" for="pref_interpolation_1">Linear</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_interpolation_2" type="radio" name="pref_interpolation" value="3" checked>
+                        <label class="dialog__formlabel" for="pref_interpolation_2">Watte trilinear</label>
+                    </div>
+
+
+                    <h2 class="dialog__formsection">Stereo mode</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_stereomode_auto" type="radio" name="pref_stereomode" value="auto" checked>
+                        <label class="dialog__formlabel" for="pref_stereomode_auto">Automatic</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_stereomode_0" type="radio" name="pref_stereomode" value="0">
+                        <label class="dialog__formlabel" for="pref_stereomode_0">Mono</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_stereomode_1" type="radio" name="pref_stereomode" value="1">
+                        <label class="dialog__formlabel" for="pref_stereomode_1">Amiga hard pan</label>
+                    </div>
+
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_stereomode_2" type="radio" name="pref_stereomode" value="2">
+                        <label class="dialog__formlabel" for="pref_stereomode_2">Real stereo</label>
+                    </div>
+
+
+                    <h2 class="dialog__formsection">Region</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_region_pal" type="radio" name="pref_region" value="pal" checked>
+                        <label class="dialog__formlabel" for="pref_region_pal">PAL</label>
+                    </div>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_region_ntsc" type="radio" name="pref_region" value="ntsc">
+                        <label class="dialog__formlabel" for="pref_region_ntsc">NTSC</label>
+                    </div>
+                </div>
+                <div class="dialog__splitpart">
+                    <h2 class="dialog__formsection" for="pref_amplification">Amiga hard pan crossfeed</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formslidervalue" name="pref_crossfeed_value" type="number" min="0" max="100" step="5" value="75">
+                        <label class="dialog__formslideruom">%</label>
+                        <input class="dialog__formslider" name="pref_crossfeed_slider" type="range" min="0" max="100" step="5" value="75">
+                    </div>
+
+                    <h2 class="dialog__formsection" for="pref_amplification">Amplification</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formslidervalue" name="pref_amplification_value" type="number" min="0" max="4" step=".05" value="1">
+                        <label class="dialog__formslideruom">×</label>
+                        <input class="dialog__formslider" type="range" name="pref_amplification_slider" min="0" max="4" step=".05" value="1">
+                    </div>
+
+                    <h2 class="dialog__formsection" for="pref_defaultpan">Default pan width for real stereo</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formslidervalue" name="pref_defaultpan_value" type="number" min="0" max="100" step="5" value="0">
+                        <label class="dialog__formslideruom">%</label>
+                        <input class="dialog__formslider" type="range" name="pref_defaultpan_slider" min="0" max="100" step="5" value="0">
+                    </div>
+
+                    <h2 class="dialog__formsection">Tempo timing</h2>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_timer_auto" type="radio" name="pref_timer" value="auto" checked>
+                        <label class="dialog__formlabel" for="pref_timer_auto">Automatic</label>
+                    </div>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_timer_cia" type="radio" name="pref_timer" value="cia">
+                        <label class="dialog__formlabel" for="pref_timer_cia">Amiga timer</label>
+                    </div>
+                    <div class="dialog__formfield">
+                        <input class="dialog__formcontrol" id="pref_timer_accurate" type="radio" name="pref_timer" value="accurate">
+                        <label class="dialog__formlabel" for="pref_timer_accurate">Accurate BPM</label>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog__buttons">
+                <button id="pref_reset" class="dialog__button">Reset to defaults</button>
+            </div>
+        </div>
+        </picture>
+
+        <p>Here you can change the <a href="#interpolation_method">interpolation method</a>,
+        <a href="#stereo_mode">stereo mixing mode and crossfeed</a> for Amiga hard pan and
+        <a href="#amplification">amplification</a>.</p>
+
+        <p><em>Region</em> controls the base frequency of the playback. Songs are a tiny bit (about 0.92%) higher
+        pitched in NTSC. <em>Tempo timing</em> controls how the tempo of the song is calculated from the BPM value. In
+        <em>Amiga timer</em> mode the tempo emulates the Amiga CIA timer timings and is derived from the base clock that
+        corresponds to the selected region. In this mode the tempo is also applied with a 1-tick delay (Protracker
+        behavior). The resulting timer tick rates are very similar irrespective of the region, however the notes are
+        still pitched higher in NTSC, thus playing a song with long samples in the wrong region will cause a noticable
+        drift. <em>Accurate BPM</em> mode uses precise timing. For example, the tick rate for BPM 125 is about
+        49.9985&nbsp;Hz in Amiga/PAL, about 49.9971&nbsp;Hz in Amiga/NTSC and exactly 50&nbsp;Hz in accurate mode.</p>
+
+        <aside>Most PC trackers did not replicate the CIA timer's accuracy or the 1-tick delay. Songs composed with these
+        trackers will have better accuracy with accurate BPM mode. For whatever reason, many PC trackers mapped the C-2
+        note to 8363&nbsp;Hz (which is the NTSC rate). Songs that use long samples and were composed with such trackers
+        may need region to be set to NTSC and tempo timer set to accurate BPM to prevent long samples from drifting away in
+        time.</aside>
+
+        <p>The <em>automatic</em> setting for tempo timing lets the player decide which method shall be used. Songs that
+        have more, than 4 channels, use 8xx and E8x (panning) effects or extended octaves will use accurate BPM
+        (assuming they were composed on a PC), other songs will use the Amiga timer.</p>
+
+        <p>There is also an option to set the <em>default pan width for real stereo</em>. This is used to set the
+        panning of MOD channels at the start of playback and has an effect when using real stereo mode only. If the
+        value is set to 0%, all channels will initially be panned to center. When the value is 100%, channels will
+        initially be fully panned to the left or right, according to Amiga channel mappings. Values in between set
+        panning between the middle and side, according to the chosen percentage. Note that this option only controls
+        the initial panning and the song must be restarted to hear its effect.</p>
+
+        <p>The default settings can be restored by clicking the <em>Reset to defaults</em> button.</p>
+
+        <div class="help__closebox">
+            <button id="close_help" class="help__close" title="Close help"></button>
+        </div>
+
+        <script>
+            document.body.addEventListener("keydown", e => {
+                if (!(e.altKey || e.ctrlKey || e.metaKey) && (e.key || "").toLowerCase() === "escape") {
+                    window.close()
+                    e.preventDefault()
+                }
+            })
+            document.getElementById("close_help").addEventListener("click", e => {
+                window.close()
+                e.preventDefault()
+            })
+        </script>
+
+    </body>
+</html>

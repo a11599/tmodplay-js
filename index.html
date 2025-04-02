@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Loading...</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <style>
+            @keyframes spin {
+                0% {
+                    transform: rotate(45deg);
+                }
+                50% {
+                    transform: rotate(225deg);
+                }
+                100% {
+                    transform: rotate(405deg);
+                }
+            }
+            @keyframes flash {
+                0% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: .6;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            body {
+                background: rgb(0, 0, 0);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main"></div>
+        <div id="loading" style="position: fixed; top: 50%; left: 50%;">
+            <div style="position: absolute; margin: -25px 0 0 -25px; border: 5px solid rgb(8, 64, 88); border-top-color: rgb(12, 144, 204); width: 40px; height: 40px; border-radius: 100px; animation: 1.2s linear infinite spin;"></div>
+            <div style="animation: .8s ease-in-out infinite flash;">
+                <div style="position: absolute; margin: -10px 0 0 -10px; border: 2px solid rgb(220, 212, 200); width: 16px; height: 16px; border-radius: 100px;"></div>
+                <div style="position: absolute; margin: -14px 0 0 -3px; border: 2px solid rgb(0, 0, 0); background: rgb(220, 212, 200); width: 2px; height: 10px;"></div>
+            </div>
+        </div>
+        <script>
+            function preloadFont(url) {
+                const link = document.createElement("link")
+                link.setAttribute("rel", "preload")
+                link.setAttribute("as", "font")
+                link.setAttribute("type", `font/${url.substring(url.lastIndexOf(".") + 1)}`)
+                link.setAttribute("crossorigin", "")
+                link.setAttribute("href", url)
+                document.head.appendChild(link)
+            }
+
+            preloadFont("ui/fonts/chicagoflf.ttf")
+            preloadFont("ui/fonts/naturalmono.ttf")
+            preloadFont("ui/fonts/metropolis.woff2")
+
+            const css = document.createElement("link")
+            css.setAttribute("rel", "stylesheet")
+            css.setAttribute("type", "text/css")
+            css.setAttribute("media", "screen")
+            css.setAttribute("href", "ui/tmodplay.css")
+            document.head.appendChild(css)
+        </script>
+        <script src="ui/tmodplay.js" type="module"></script>
+    </body>
+</html>
