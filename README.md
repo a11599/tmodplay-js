@@ -15,6 +15,8 @@ _an audio player for the [MOD music format](https://en.wikipedia.org/wiki/MOD_(f
 
 It delivers 107% of the original tmodplay experience in the browser with a few improvements (floating point mixing for cleaner audio, BLEP interpolation, volume ramping for click-free playback, high resolution UI, mouse support).
 
+Try it on https://a11599.github.io/tmodplay-js/!
+
 
 # Why?
 
