@@ -11,6 +11,7 @@ const strings = {
         position: "pos: {sequence}.{row}",
         stopped: "stopped",
         noSong: "Drop or open a MOD file",
+        loadError: "Incompatible file",
         samples: "Samples / song message",
         help: "Press F1 for help"
     },
@@ -326,8 +327,16 @@ class TMODPlay {
         return new Promise(async(resolve, reject) => {
             reader.addEventListener("load", async() => {
                 try {
-                    this.song = await this.player.load(reader.result)
-                    this.songFilename = file.name
+                    await this.stop()
+
+                    try {
+                        this.song = await this.player.load(reader.result)
+                        this.songFilename = file.name
+                    } catch(e) {
+                        console.error(e)
+                        this.song = null
+                        this.songFilename = strings.header.loadError
+                    }
 
                     // Pick automatic interpolation, stereo mode and tempo timer
                     // based on song features
@@ -361,6 +370,9 @@ class TMODPlay {
      */
 
     async play() {
+        if (!this.song) {
+            return
+        }
 
         // Start playback, attempt player setup in case it has not been
         // initialized before
@@ -391,6 +403,10 @@ class TMODPlay {
      */
 
     async stop() {
+        if (!this.playing) {
+            return
+        }
+
         await this.player.stop()
         this.playing = false
 
@@ -1280,6 +1296,14 @@ class TMODPlay {
 
     updateUISongProperties() {
         if (!this.song) {
+            document.title = strings.appTitle
+            document.getElementById("song_title").textContent = this.songFilename || strings.header.noSong
+            document.getElementById("button_play").classList.add("info__control--hide")
+            document.getElementById("num_channels").textContent = strings.numChannels[0]
+            for (let i = 0; i < 32; i++) {
+                document.getElementById(`sample_${i}`).textContent = String.fromCharCode(160)
+                document.getElementById(`sample_vu_${i}`).style.transform = `scale(0, 1)`
+            }
             return
         }
 
@@ -1457,6 +1481,10 @@ class TMODPlay {
      */
 
     updateUISampleRMS(channelInfo) {
+        if (!this.song) {
+            return
+        }
+
         const decayMultiplier = Math.max(0, 1 - (performance.now() - this.lastVSyncTime) / 32)
         const sampleRMS = {}
         const rmsLogLimit = rmsLogLimitdB / -10
