@@ -626,6 +626,8 @@ export class SoftwareWavetable extends Wavetable {
             channel.cutoff.volumeStep = (-channel.cutoff.volume) / channel.cutoff.volumeRampSteps
             channel.cutoff.leftVolumeStep = (-channel.cutoff.leftVolume) / channel.cutoff.volumeRampSteps
             channel.cutoff.rightVolumeStep = (-channel.cutoff.rightVolume) / channel.cutoff.volumeRampSteps
+        } else {
+            channel.cutoff.volumeRampSteps = 0
         }
     }
 
@@ -652,31 +654,39 @@ export class SoftwareWavetable extends Wavetable {
             let sampleLoopLength
             let sampleData
             let samplePosition
+            let volRampLength = 0
 
             // Cut off (fade out) previous sample
 
-            if (channel.cutoff && channel.cutoff.volumeRampSteps > 0 && channel.cutoff.sample) {
-                sample = channel.cutoff.sample
-                sampleLength = sample.length
-                sampleLoopLength = sample.loopLength
-                sampleData = sample.data
-                samplePosition = channel.cutoff.samplePosition + sample.start
+            if (channel.cutoff && channel.cutoff.sample) {
+                volRampLength = Math.min(channel.cutoff.volumeRampSteps, numSamples)
 
-                const volRampChunkLength = Math.min(channel.cutoff.volumeRampSteps, numSamples)
-                if (volRampChunkLength > 0) {
+                if (volRampLength > 0) {
+                    sample = channel.cutoff.sample
+                    sampleLength = sample.length
+                    sampleLoopLength = sample.loopLength
+                    sampleData = sample.data
+                    samplePosition = channel.cutoff.samplePosition + sample.start
+
                     renderChunk(
-                        channel.cutoff, offset, offset + volRampChunkLength,
+                        channel.cutoff, offset, offset + volRampLength,
                         channel.cutoff.volumeStep, channel.cutoff.leftVolumeStep, channel.cutoff.rightVolumeStep
                     )
-                    channel.cutoff.volumeRampSteps -= volRampChunkLength
-                }
-                channel.cutoff.samplePosition = samplePosition - sample.start
-            }
 
-            sample = channel.sample
+                    channel.cutoff.volumeRampSteps -= volRampLength
+                    channel.cutoff.samplePosition = samplePosition - sample.start
+                }
+
+                // Cutoff complete, remove sample reference
+
+                if (channel.cutoff.volumeRampSteps === 0) {
+                    channel.cutoff.sample = null
+                }
+            }
 
             // Mix current sample
 
+            sample = channel.sample
             if (sample === null) {
                 return
             }
@@ -692,19 +702,16 @@ export class SoftwareWavetable extends Wavetable {
             // Render while ramping volume slowly to avoid audible clicks due
             // to sudden change of DAC output
 
-            if (channel.volumeRampSteps > 0) {
-                let volRampChunkLength = Math.min(channel.volumeRampSteps, chunkLength)
+            volRampLength = Math.min(channel.volumeRampSteps, numSamples)
+            if (volRampLength > 0) {
+                renderChunk(
+                    channel, offset, offset + volRampLength,
+                    channel.volumeStep, channel.leftVolumeStep, channel.rightVolumeStep
+                )
 
-                if (volRampChunkLength > 0) {
-                    renderChunk(
-                        channel, chunkOffset, chunkOffset + volRampChunkLength,
-                        channel.volumeStep, channel.leftVolumeStep, channel.rightVolumeStep
-                    )
-
-                    chunkOffset += volRampChunkLength
-                    chunkLength -= volRampChunkLength
-                    channel.volumeRampSteps -= volRampChunkLength
-                }
+                chunkOffset += volRampLength
+                chunkLength -= volRampLength
+                channel.volumeRampSteps -= volRampLength
 
                 // Volume ramping complete, set wanted volume levels for further
                 // mixing
@@ -724,9 +731,7 @@ export class SoftwareWavetable extends Wavetable {
                 if (channel.volume === 0) {
                     samplePosition += chunkLength * channel.speed
                     if (samplePosition > sampleLength && sampleLoopLength > 0) {
-                        do {
-                            samplePosition -= sampleLoopLength
-                        } while (samplePosition > sampleLength)
+                        samplePosition = ((samplePosition - sample.loopStart) % sampleLoopLength) + sample.loopStart
                     }
                 } else {
                     renderChunk(channel, chunkOffset, chunkOffset + chunkLength)
@@ -783,9 +788,7 @@ export class SoftwareWavetable extends Wavetable {
                         if (sampleLoopLength === 0) {
                             return
                         } else {
-                            do {
-                                samplePosition -= sampleLoopLength
-                            } while (samplePosition > sampleLength)
+                            samplePosition = ((samplePosition - sample.loopStart) % sampleLoopLength) + sample.loopStart
                         }
                     }
 

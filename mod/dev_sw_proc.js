@@ -207,6 +207,8 @@ class SoftwareRendererDeviceProcessor extends AudioWorkletProcessor {
     async play() {
         return new Promise(resolve => {
             this.resolveStart = resolve
+            this.routine.reset()
+            this.wavetable.resetMixer()
             this.state = SoftwareRendererDeviceProcessor.STATE.STARTING
         })
     }
@@ -262,63 +264,69 @@ class SoftwareRendererDeviceProcessor extends AudioWorkletProcessor {
      */
 
     process(inputList, outputList) {
+        try {
 
-        // Don't render when stopped or no playroutine
+            // Don't render when stopped or no playroutine
 
-        if (!this.routine || this.state === SoftwareRendererDeviceProcessor.STATE.STOPPED) {
-            return true
-        }
-
-        // Handle playback start/stop requests
-
-        if (this.state === SoftwareRendererDeviceProcessor.STATE.STARTING) {
-            this.state = SoftwareRendererDeviceProcessor.STATE.PLAYING
-            this.startTime = currentTime
-            if (typeof this.resolveStart === "function") {
-                this.resolveStart()
-                this.resolveStart = null
-            }
-        } else if (this.state === SoftwareRendererDeviceProcessor.STATE.STOPPING) {
-            this.state = SoftwareRendererDeviceProcessor.STATE.STOPPED
-            if (typeof this.resolveStop === "function") {
-                this.routine.reset()
-                this.wavetable.resetMixer()
-                this.resolveStop()
-                this.resolveStop = null
-            }
-        }
-
-        // Playing, render stereo audio into output buffer
-
-        let buffer = outputList[0]
-        let bufferOffset = 0
-        let bufferLength = buffer[0].length
-
-        while (bufferLength > 0) {
-
-            // Call the periodic playroutine tick
-
-            if (this.tickSamplesLeft < 1) {
-                this.tickSamplesLeft += this.routine.processTick() * sampleRate
+            if (!this.routine || this.state === SoftwareRendererDeviceProcessor.STATE.STOPPED) {
+                return true
             }
 
-            // Render samples until next tick or end of render buffer
+            // Handle playback start/stop requests
 
-            let renderLength = Math.min(bufferLength, Math.round(this.tickSamplesLeft))
-            this.wavetable.render(buffer, bufferOffset, renderLength)
+            if (this.state === SoftwareRendererDeviceProcessor.STATE.STARTING) {
+                this.state = SoftwareRendererDeviceProcessor.STATE.PLAYING
+                this.startTime = currentTime
+                if (typeof this.resolveStart === "function") {
+                    const started = this.resolveStart
+                    this.resolveStart = null
+                    started()
+                }
+            } else if (this.state === SoftwareRendererDeviceProcessor.STATE.STOPPING) {
+                this.state = SoftwareRendererDeviceProcessor.STATE.STOPPED
+                if (typeof this.resolveStop === "function") {
+                    const stopped = this.resolveStop
+                    this.resolveStop = null
+                    this.routine.reset()
+                    this.wavetable.resetMixer()
+                    stopped()
+                }
+            }
 
-            this.tickSamplesLeft -= renderLength
-            bufferLength -= renderLength
-            bufferOffset += renderLength
+            // Playing, render stereo audio into output buffer
+
+            let buffer = outputList[0]
+            let bufferOffset = 0
+            let bufferLength = buffer[0].length
+
+            while (bufferLength > 0) {
+
+                // Call the periodic playroutine tick
+
+                if (this.tickSamplesLeft < 1) {
+                    this.tickSamplesLeft += this.routine.processTick() * sampleRate
+                }
+
+                // Render samples until next tick or end of render buffer
+
+                let renderLength = Math.min(bufferLength, Math.round(this.tickSamplesLeft))
+                this.wavetable.render(buffer, bufferOffset, renderLength)
+
+                this.tickSamplesLeft -= renderLength
+                bufferLength -= renderLength
+                bufferOffset += renderLength
+            }
+
+            // Post player and wavetable channel info to the renderer process.
+
+            this.port.postMessage({
+                timestamp: currentTime,
+                playTimestamp: currentTime - this.startTime,
+                status: this.routine.getInfo()
+            })
+        } catch(e) {
+            console.error(e)
         }
-
-        // Post player and wavetable channel info to the renderer process.
-
-        this.port.postMessage({
-            timestamp: currentTime,
-            playTimestamp: currentTime - this.startTime,
-            status: this.routine.getInfo()
-        })
 
         return true
     }
