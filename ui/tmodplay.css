@@ -163,6 +163,7 @@ body, html {
     position: relative;
     border: none;
     cursor: pointer;
+    font-size: 0;
 }
 .dialog__close:hover,
 .dialog__close:focus {
@@ -514,6 +515,7 @@ body, html {
     border: none;
     border-radius: 100px;
     background: var(--border-color);
+    color: var(--primary-text-color);
     cursor: pointer;
 }
 .info__control:focus-visible,

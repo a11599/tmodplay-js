@@ -55,6 +55,7 @@ const strings = {
         ntsc: "NTSC"
     },
     preferences: "Preferences",
+    closeDialog: "Close dialog",
     resetPreferences: "Reset to defaults",
     renderer: {
         SoftwareRendererDevice: "Software renderer",
@@ -545,10 +546,10 @@ class TMODPlay {
         scopes.className = "scopes"
         scopes.innerHTML = `
             <div class="content">
-                <div class="content__part content__part--two-pane content__part--no-wrap content__part--grow">
-                    <div><a class="scopes__link" href="#" id="stereo_mode"></a></div>
-                    <div><a class="scopes__link" href="#" id="interpolation"></a></div>
-                </div>
+                <a href="#" class="content__part content__part--two-pane content__part--no-wrap content__part--grow scopes__link">
+                    <div id="stereo_mode"></div>
+                    <div id="interpolation"></div>
+                </a>
                 <div class="content__part content__part--two-pane content__part--no-wrap content__part--grow text--right">
                     <div id="num_channels">${strings.numChannels[0]}</div>
                     <div id="renderer"></div>
@@ -600,7 +601,7 @@ class TMODPlay {
             <div class="dialog">
                 <div class="dialog__header">
                     <h1 class="dialog__title">${strings.preferences}</h1>
-                    <button class="dialog__close"></button>
+                    <button class="dialog__close">${strings.closeDialog}</button>
                 </div>
                 <div class="dialog__split"><div class="dialog__splitpart">
                     <h2 class="dialog__formsection">${strings.interpolation.select}</h2>
